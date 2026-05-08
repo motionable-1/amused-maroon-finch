@@ -12,23 +12,27 @@ import {
   WarningIcon,
 } from "./Icons";
 import { TextAnimation } from "./TextAnimation";
-import { breathe, sceneOpacity, settle, softEase, warmEase } from "./helpers";
+import { breathe, sceneForegroundOpacity, sceneOpacity, settle, softEase, warmEase } from "./helpers";
 
 type SceneProps = {
   duration: number;
 };
 
 type SceneShellProps = SceneProps & {
+  background: React.ReactNode;
   children: React.ReactNode;
   className: string;
   isLast?: boolean;
 };
 
-const SceneShell = ({ children, className, duration, isLast = false }: SceneShellProps) => {
+const SceneShell = ({ background, children, className, duration, isLast = false }: SceneShellProps) => {
   const frame = useCurrentFrame();
   return (
     <AbsoluteFill className={`scene-shell ${className}`} style={{ opacity: sceneOpacity(frame, duration, isLast) }}>
-      {children}
+      <div className="scene-background">{background}</div>
+      <div className="scene-foreground" style={{ opacity: sceneForegroundOpacity(frame, duration, isLast) }}>
+        {children}
+      </div>
     </AbsoluteFill>
   );
 };
@@ -102,10 +106,18 @@ export const OpeningScene = ({ duration }: SceneProps) => {
   const floor = breathe(frame, 16, 64, 0.5);
 
   return (
-    <SceneShell className="scene-opening" duration={duration}>
-      <div className="opening-radial" style={{ transform: `scale(${1 + pulse})` }} />
-      <div className="opening-floor" style={{ transform: `translate3d(0, ${floor}px, 0)` }} />
-      <LineField />
+    <SceneShell
+      className="scene-opening"
+      duration={duration}
+      background={
+        <>
+          <div className="opening-radial" style={{ transform: `scale(${1 + pulse})` }} />
+          <div className="opening-floor" style={{ transform: `translate3d(0, ${floor}px, 0)` }} />
+          <LineField />
+          <NoiseLayer />
+        </>
+      }
+    >
       <div className="opening-axis" style={{ opacity: softEase(frame, [6, 28], [0, 0.42]) }} />
       <div
         className="hero-ring"
@@ -128,7 +140,6 @@ export const OpeningScene = ({ duration }: SceneProps) => {
           <span className="accent-text">people</span>
         </TextAnimation>
       </div>
-      <NoiseLayer />
     </SceneShell>
   );
 };
@@ -141,10 +152,18 @@ export const ReasoningScene = ({ duration }: SceneProps) => {
   const dotDrift = breathe(frame, 12, 44, 0.6);
 
   return (
-    <SceneShell className="scene-reasoning" duration={duration}>
-      <div className="cream-wash" />
-      <div className="peach-bloom" style={{ transform: `translate3d(${breathe(frame, 20, 58)}px, ${breathe(frame, 16, 46, 1)}px, 0)` }} />
-      <div className="dot-field dot-field-right" style={{ transform: `translate3d(${dotDrift}px, ${dotDrift * -0.5}px, 0)` }} />
+    <SceneShell
+      className="scene-reasoning"
+      duration={duration}
+      background={
+        <>
+          <div className="cream-wash" />
+          <div className="peach-bloom" style={{ transform: `translate3d(${breathe(frame, 20, 58)}px, ${breathe(frame, 16, 46, 1)}px, 0)` }} />
+          <div className="dot-field dot-field-right" style={{ transform: `translate3d(${dotDrift}px, ${dotDrift * -0.5}px, 0)` }} />
+          <NoiseLayer />
+        </>
+      }
+    >
       <div className="reasoning-copy">
         <TextAnimation className="cream-headline" delay={6}>
           Frontier AI,
@@ -189,7 +208,6 @@ export const ReasoningScene = ({ duration }: SceneProps) => {
           />
         ))}
       </div>
-      <NoiseLayer />
     </SceneShell>
   );
 };
@@ -243,9 +261,17 @@ const IsometricStack = ({ safety = false }: { safety?: boolean }) => {
 export const ProductScene = ({ duration }: SceneProps) => {
   const frame = useCurrentFrame();
   return (
-    <SceneShell className="scene-product" duration={duration}>
-      <div className="dark-bloom" style={{ transform: `translate3d(${breathe(frame, 18, 62)}px, ${breathe(frame, 15, 56)}px, 0)` }} />
-      <LineField />
+    <SceneShell
+      className="scene-product"
+      duration={duration}
+      background={
+        <>
+          <div className="dark-bloom" style={{ transform: `translate3d(${breathe(frame, 18, 62)}px, ${breathe(frame, 15, 56)}px, 0)` }} />
+          <LineField />
+          <NoiseLayer />
+        </>
+      }
+    >
       <div className="dark-copy">
         <TextAnimation className="dark-headline" delay={6}>
           <span>Models that </span>
@@ -260,7 +286,6 @@ export const ProductScene = ({ duration }: SceneProps) => {
       <FeatureRow delay={23} icon={<TargetIcon className="line-icon" />} label="Deeper context" top={690} />
       <FeatureRow delay={28} icon={<LockIcon className="line-icon" />} label="Enterprise ready" top={805} />
       <IsometricStack />
-      <NoiseLayer />
     </SceneShell>
   );
 };
@@ -268,9 +293,17 @@ export const ProductScene = ({ duration }: SceneProps) => {
 export const SafetyScene = ({ duration }: SceneProps) => {
   const frame = useCurrentFrame();
   return (
-    <SceneShell className="scene-safety" duration={duration}>
-      <div className="dark-bloom safety-bloom" style={{ transform: `translate3d(${breathe(frame, 14, 48)}px, ${breathe(frame, 12, 60)}px, 0)` }} />
-      <LineField />
+    <SceneShell
+      className="scene-safety"
+      duration={duration}
+      background={
+        <>
+          <div className="dark-bloom safety-bloom" style={{ transform: `translate3d(${breathe(frame, 14, 48)}px, ${breathe(frame, 12, 60)}px, 0)` }} />
+          <LineField />
+          <NoiseLayer />
+        </>
+      }
+    >
       <div className="dark-copy">
         <TextAnimation className="dark-headline heavy" delay={7}>
           Reliable
@@ -284,7 +317,6 @@ export const SafetyScene = ({ duration }: SceneProps) => {
       <FeatureRow delay={23} icon={<PeopleIcon className="line-icon" />} label="Human-centered defaults" top={690} />
       <FeatureRow delay={28} icon={<DocIcon className="line-icon" />} label="Auditable decisions" top={805} />
       <IsometricStack safety />
-      <NoiseLayer />
     </SceneShell>
   );
 };
@@ -296,10 +328,20 @@ export const FinalScene = ({ duration }: SceneProps) => {
   const endGlow = warmEase(frame, [duration - 34, duration - 4], [0, 1]);
 
   return (
-    <SceneShell className="scene-final" duration={duration} isLast>
-      <div className="cream-wash" />
-      <div className="dot-field dot-field-left" style={{ transform: `translate3d(${breathe(frame, 9, 42)}px, ${breathe(frame, 10, 48)}px, 0)` }} />
-      <div className="dot-field dot-field-bottom" style={{ transform: `translate3d(${breathe(frame, 12, 54)}px, ${breathe(frame, 8, 46)}px, 0)` }} />
+    <SceneShell
+      className="scene-final"
+      duration={duration}
+      isLast
+      background={
+        <>
+          <div className="cream-wash" />
+          <div className="dot-field dot-field-left" style={{ transform: `translate3d(${breathe(frame, 9, 42)}px, ${breathe(frame, 10, 48)}px, 0)` }} />
+          <div className="dot-field dot-field-bottom" style={{ transform: `translate3d(${breathe(frame, 12, 54)}px, ${breathe(frame, 8, 46)}px, 0)` }} />
+          <div className="end-glow" style={{ opacity: endGlow }} />
+          <NoiseLayer />
+        </>
+      }
+    >
       <div className="final-copy">
         <TextAnimation className="final-eyebrow" delay={5}>
           Anthropic Launch
@@ -340,8 +382,6 @@ export const FinalScene = ({ duration }: SceneProps) => {
           </TextAnimation>
         </div>
       </div>
-      <div className="end-glow" style={{ opacity: endGlow }} />
-      <NoiseLayer />
     </SceneShell>
   );
 };

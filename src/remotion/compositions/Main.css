@@ -24,6 +24,21 @@
   height: 100%;
 }
 
+.scene-background,
+.scene-foreground {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.scene-background {
+  z-index: 0;
+}
+
+.scene-foreground {
+  z-index: 1;
+}
+
 .noise-layer {
   position: absolute;
   inset: 0;
